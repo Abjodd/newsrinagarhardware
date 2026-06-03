@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Products from "./pages/Products";
 import Projects from "./pages/Projects";
 import Contact from "./pages/Contact";
+import OwnerDashboard from "./pages/OwnerDashboard";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 
@@ -29,9 +30,11 @@ const App = () => (
             <Route path="/products" element={<Products />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/contact" element={<Contact />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
           </Route>
+          {/* Owner Dashboard - Outside layout */}
+          <Route path="/owner-dashboard" element={<OwnerDashboard />} />
+          {/* Catch-all */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
