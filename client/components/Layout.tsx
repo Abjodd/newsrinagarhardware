@@ -154,6 +154,9 @@ export default function Layout() {
                 <a href="#" className="text-gray-400 hover:text-primary text-sm transition-colors">
                   Terms of Service
                 </a>
+                <Link to="/owner-dashboard" className="text-gray-500 hover:text-primary text-sm transition-colors font-semibold">
+                  Admin
+                </Link>
               </div>
             </div>
           </div>

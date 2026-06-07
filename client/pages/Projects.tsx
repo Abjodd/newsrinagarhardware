@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
 
 export default function Projects() {
+  const facilityPhotos = [
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fce7a364d27d543178f5c2f415aa423c4?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F599dde0c5a8348e08c6019f43f63c6e3?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F772b7f0844ab461bb422eaea9de1e544?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fc9b84739d1fd42029f66979a3f3797b8?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F3218bc89686f4a42be15dc880b60e566?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe16475f7945647638f99df3ec459081a?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Ffcdbe46c7c9f435c8aca0c462b19c37c?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fd223799c0b5d40939eff7da9504b22e3?format=webp&width=800&height=1200",
+  ];
+
   const projects = [
     {
       title: "Industrial Steel Bridge",
@@ -66,9 +77,31 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* Projects Grid */}
+      {/* Facility Gallery */}
       <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-white text-center mb-4">Our Facility in Action</h2>
+          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+            State-of-the-art machinery and professional infrastructure showcasing our fabrication capabilities
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {facilityPhotos.map((photo, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden rounded-xl border border-gray-800 hover:border-primary/50 transition-all cursor-pointer"
+              >
+                <img
+                  src={photo}
+                  alt={`Facility ${index + 1}`}
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </div>
+            ))}
+          </div>
+
+          <h2 className="text-3xl font-bold text-white mt-16 mb-8">Featured Projects</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {projects.map((project, index) => (
               <div
@@ -84,11 +117,6 @@ export default function Projects() {
                   </p>
                   <h3 className="text-white font-bold text-lg mb-2">{project.title}</h3>
                   <p className="text-gray-400 text-sm">{project.description}</p>
-                  <div className="mt-4 pt-4 border-t border-gray-800">
-                    <button className="text-primary hover:text-yellow-400 text-sm font-semibold transition-colors">
-                      View Details →
-                    </button>
-                  </div>
                 </div>
               </div>
             ))}
