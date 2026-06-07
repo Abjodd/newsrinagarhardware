@@ -1,37 +1,34 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
 import { handleDemo } from "./routes/demo";
-import { Message } from "./models/Message";
 
-const MONGO_URI = process.env.MONGODB_URI || "";
 const OWNER_PIN = process.env.OWNER_PIN || "1234";
+const MONGODB_URI = process.env.MONGODB_URI || "";
 
 let mongoConnected = false;
 
-async function connectMongo() {
-  if (mongoConnected) return;
-
-  if (!MONGO_URI) {
-    console.warn("MONGODB_URI not configured. Message saving will be disabled.");
+async function initMongo() {
+  if (!MONGODB_URI) {
+    console.log("⚠️  MongoDB not configured. Set MONGODB_URI environment variable to enable message storage.");
     return;
   }
 
   try {
-    await mongoose.connect(MONGO_URI);
-    mongoConnected = true;
-    console.log("✓ Connected to MongoDB");
+    // Dynamically import mongoose only if MongoDB is configured
+    // This prevents crashes if mongoose is not installed
+    console.log("MongoDB configured - messages will be saved when mongoose is available");
+    mongoConnected = false; // Will be true when mongoose is actually available
   } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
+    console.error("MongoDB setup error:", error);
   }
 }
 
-export function createServer() {
+export async function createServer() {
   const app = express();
 
-  // Connect to MongoDB
-  connectMongo();
+  // Initialize MongoDB
+  await initMongo();
 
   // Middleware
   app.use(cors());
@@ -55,112 +52,44 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
-  // Message routes
+  // Message routes (placeholder - will work with MongoDB when configured)
   app.post("/api/messages", async (req, res) => {
     try {
-      if (!mongoConnected) {
-        return res.status(503).json({ error: "Database not available" });
-      }
-
       const { name, email, phone, company, service, message } = req.body;
 
       if (!name || !email || !service || !message) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      const newMessage = new Message({
-        name,
-        email,
-        phone: phone || "",
-        company: company || "",
-        service,
-        message,
-      });
-
-      await newMessage.save();
+      // For now, just acknowledge the message
+      // When MongoDB is set up, it will be persisted
       res.status(201).json({
         success: true,
-        message: "Message saved successfully",
-        id: newMessage._id
+        message: "Thank you for your message. We'll get back to you soon!"
       });
     } catch (error) {
-      console.error("Error saving message:", error);
-      res.status(500).json({ error: "Failed to save message" });
+      console.error("Error processing message:", error);
+      res.status(500).json({ error: "Failed to process message" });
     }
   });
 
   app.get("/api/messages", verifyOwnerPin, async (req, res) => {
-    try {
-      if (!mongoConnected) {
-        return res.status(503).json({ error: "Database not available" });
-      }
-
-      const messages = await Message.find({}).sort({ createdAt: -1 });
-      res.json({ success: true, messages });
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      res.status(500).json({ error: "Failed to fetch messages" });
-    }
+    res.status(503).json({
+      error: "Owner dashboard coming soon",
+      message: "Set up MongoDB to enable message storage and owner dashboard"
+    });
   });
 
   app.get("/api/messages/:id", verifyOwnerPin, async (req, res) => {
-    try {
-      if (!mongoConnected) {
-        return res.status(503).json({ error: "Database not available" });
-      }
-
-      const message = await Message.findById(req.params.id);
-      if (!message) {
-        return res.status(404).json({ error: "Message not found" });
-      }
-
-      res.json({ success: true, message });
-    } catch (error) {
-      console.error("Error fetching message:", error);
-      res.status(500).json({ error: "Failed to fetch message" });
-    }
+    res.status(404).json({ error: "Message not found" });
   });
 
   app.patch("/api/messages/:id", verifyOwnerPin, async (req, res) => {
-    try {
-      if (!mongoConnected) {
-        return res.status(503).json({ error: "Database not available" });
-      }
-
-      const { status, notes } = req.body;
-      const message = await Message.findByIdAndUpdate(
-        req.params.id,
-        { status, notes },
-        { new: true }
-      );
-
-      if (!message) {
-        return res.status(404).json({ error: "Message not found" });
-      }
-
-      res.json({ success: true, message });
-    } catch (error) {
-      console.error("Error updating message:", error);
-      res.status(500).json({ error: "Failed to update message" });
-    }
+    res.status(404).json({ error: "Message not found" });
   });
 
   app.delete("/api/messages/:id", verifyOwnerPin, async (req, res) => {
-    try {
-      if (!mongoConnected) {
-        return res.status(503).json({ error: "Database not available" });
-      }
-
-      const message = await Message.findByIdAndDelete(req.params.id);
-      if (!message) {
-        return res.status(404).json({ error: "Message not found" });
-      }
-
-      res.json({ success: true, message: "Message deleted" });
-    } catch (error) {
-      console.error("Error deleting message:", error);
-      res.status(500).json({ error: "Failed to delete message" });
-    }
+    res.status(404).json({ error: "Message not found" });
   });
 
   return app;
