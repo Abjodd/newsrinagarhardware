@@ -7,40 +7,106 @@
 
 @layer base {
   /**
-   * Tailwind CSS theme - Industrial Dark Theme
+   * Tailwind CSS theme - Green & White Professional Theme
    * tailwind.config.ts expects the following color variables to be expressed as HSL values.
    * A different format will require also updating the theme in tailwind.config.ts.
   */
   :root {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 15%;
 
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
 
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
 
-    --primary: 40 95% 52%;
-    --primary-foreground: 0 0% 10%;
+    --primary: 142 72% 29%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 142 72% 45%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 30%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 0 0% 85%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 40 95% 52%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 142 72% 29%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 25%;
-    --input: 0 0% 15%;
-    --ring: 40 95% 52%;
+    --border: 0 0% 92%;
+    --input: 0 0% 98%;
+    --ring: 142 72% 29%;
 
     --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
   }
 }
 

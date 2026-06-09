@@ -10,9 +10,12 @@ let mongoConnected = false;
 let mongoose: any = null;
 let Message: any = null;
 
+// In-memory message storage as fallback
+const inMemoryMessages: any[] = [];
+
 async function initMongo() {
   if (!MONGODB_URI) {
-    console.log("⚠️  MongoDB not configured. Set MONGODB_URI environment variable to enable message storage.");
+    console.log("⚠️  MongoDB not configured. Using in-memory storage. Messages will be lost on server restart.");
     return;
   }
 
@@ -81,28 +84,40 @@ export async function createServer() {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      if (!mongoConnected || !Message) {
-        console.log("MongoDB not available, but message received:", { name, email, service });
-        return res.status(201).json({
-          success: true,
-          message: "Thank you for your message. We'll get back to you soon!"
-        });
-      }
-
-      const newMessage = new Message({
+      const newMsg = {
+        _id: Date.now().toString(),
         name,
         email,
         phone: phone || "",
         company: company || "",
         service,
         message,
-      });
+        createdAt: new Date(),
+        status: "new",
+        notes: ""
+      };
 
-      await newMessage.save();
+      if (mongoConnected && Message) {
+        try {
+          const dbMessage = new Message(newMsg);
+          await dbMessage.save();
+          return res.status(201).json({
+            success: true,
+            message: "Message saved successfully",
+            id: dbMessage._id
+          });
+        } catch (dbError) {
+          console.error("MongoDB save failed, using in-memory:", dbError);
+        }
+      }
+
+      // Fallback to in-memory storage
+      inMemoryMessages.push(newMsg);
+      console.log(`✓ Message saved (in-memory): ${name} - ${email}`);
       res.status(201).json({
         success: true,
-        message: "Message saved successfully",
-        id: newMessage._id
+        message: "Thank you! We'll get back to you soon.",
+        id: newMsg._id
       });
     } catch (error) {
       console.error("Error saving message:", error);
@@ -112,12 +127,20 @@ export async function createServer() {
 
   app.get("/api/messages", verifyOwnerPin, async (req, res) => {
     try {
-      if (!mongoConnected || !Message) {
-        return res.status(503).json({ error: "Database not available" });
+      if (mongoConnected && Message) {
+        try {
+          const messages = await Message.find({}).sort({ createdAt: -1 });
+          return res.json({ success: true, messages });
+        } catch (dbError) {
+          console.error("MongoDB fetch failed:", dbError);
+        }
       }
 
-      const messages = await Message.find({}).sort({ createdAt: -1 });
-      res.json({ success: true, messages });
+      // Return in-memory messages
+      const sortedMessages = [...inMemoryMessages].sort((a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      res.json({ success: true, messages: sortedMessages });
     } catch (error) {
       console.error("Error fetching messages:", error);
       res.status(500).json({ error: "Failed to fetch messages" });
@@ -126,11 +149,17 @@ export async function createServer() {
 
   app.get("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
-      if (!mongoConnected || !Message) {
-        return res.status(503).json({ error: "Database not available" });
+      if (mongoConnected && Message) {
+        try {
+          const message = await Message.findById(req.params.id);
+          if (message) return res.json({ success: true, message });
+        } catch (dbError) {
+          console.error("MongoDB fetch failed:", dbError);
+        }
       }
 
-      const message = await Message.findById(req.params.id);
+      // Search in-memory
+      const message = inMemoryMessages.find(m => m._id === req.params.id);
       if (!message) {
         return res.status(404).json({ error: "Message not found" });
       }
@@ -144,21 +173,29 @@ export async function createServer() {
 
   app.patch("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
-      if (!mongoConnected || !Message) {
-        return res.status(503).json({ error: "Database not available" });
+      const { status, notes } = req.body;
+
+      if (mongoConnected && Message) {
+        try {
+          const message = await Message.findByIdAndUpdate(
+            req.params.id,
+            { status, notes },
+            { new: true }
+          );
+          if (message) return res.json({ success: true, message });
+        } catch (dbError) {
+          console.error("MongoDB update failed:", dbError);
+        }
       }
 
-      const { status, notes } = req.body;
-      const message = await Message.findByIdAndUpdate(
-        req.params.id,
-        { status, notes },
-        { new: true }
-      );
-
+      // Update in-memory
+      const message = inMemoryMessages.find(m => m._id === req.params.id);
       if (!message) {
         return res.status(404).json({ error: "Message not found" });
       }
 
+      message.status = status || message.status;
+      message.notes = notes || message.notes;
       res.json({ success: true, message });
     } catch (error) {
       console.error("Error updating message:", error);
@@ -168,15 +205,22 @@ export async function createServer() {
 
   app.delete("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
-      if (!mongoConnected || !Message) {
-        return res.status(503).json({ error: "Database not available" });
+      if (mongoConnected && Message) {
+        try {
+          const message = await Message.findByIdAndDelete(req.params.id);
+          if (message) return res.json({ success: true, message: "Message deleted" });
+        } catch (dbError) {
+          console.error("MongoDB delete failed:", dbError);
+        }
       }
 
-      const message = await Message.findByIdAndDelete(req.params.id);
-      if (!message) {
+      // Delete from in-memory
+      const index = inMemoryMessages.findIndex(m => m._id === req.params.id);
+      if (index === -1) {
         return res.status(404).json({ error: "Message not found" });
       }
 
+      inMemoryMessages.splice(index, 1);
       res.json({ success: true, message: "Message deleted" });
     } catch (error) {
       console.error("Error deleting message:", error);

@@ -1,26 +1,18 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Users, Award, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Shield, Zap, Users, Award, CheckCircle2, Factory } from "lucide-react";
 
 export default function Index() {
-  const photos = [
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fce7a364d27d543178f5c2f415aa423c4?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F599dde0c5a8348e08c6019f43f63c6e3?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F772b7f0844ab461bb422eaea9de1e544?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fc9b84739d1fd42029f66979a3f3797b8?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F3218bc89686f4a42be15dc880b60e566?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe16475f7945647638f99df3ec459081a?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Ffcdbe46c7c9f435c8aca0c462b19c37c?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fd223799c0b5d40939eff7da9504b22e3?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F403cff3c4f6a4206b8682437270ab0de?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F52c7501266204cb8ad92baf6a1d4d8bd?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F91b8a75649c54808a568047a7d872b1e?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F31f5609953d74222ac870afb9f46ebf4?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fd5a9f1a389984baaace31cd640ccebad?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F27f80c9018cb49f785282263826c1d2a?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fb359c0b7823c48a4892ab0b6beb6d483?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F4c433428a43e4aee9facdeb1b12d2f55?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F095496f08aa649da993f94f241c5b1ac?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe82ebb6f30a44a3ba8a19b6a6a124525?format=webp&width=800&height=1200",
+  const productImages = [
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe06305e43d9d4cffa08fb1883ed32d0e?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F121fc36202154b0b8915141850ca6c70?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fac859cb0e2bf4c28b764b179a64d052b?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F08b5a12c435c4133997246605a6d1662?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe1c45694a3e64d96947372dd9c1524ab?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F2fdcb34c0a2e40f1b476c1ffca62cd01?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fdc94756d0a6342ba983830e4c7dcb5d7?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F6bdbdd126049437caed60aa1eb0eb41e?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F11b93fbe48bb430f87fb502cb4b95884?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fb79fd40819884227b6e3c9795210e624?format=webp&width=800&height=1200",
   ];
 
   const services = [
@@ -49,80 +41,82 @@ export default function Index() {
   return (
     <div className="bg-background">
       {/* Premium Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-32 border-b-4 border-primary/40">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full mix-blend-multiply filter blur-3xl"></div>
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-green-50 to-white py-32 border-b-4 border-primary">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute -top-40 right-0 w-80 h-80 bg-primary rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute -bottom-40 left-0 w-80 h-80 bg-secondary rounded-full mix-blend-multiply filter blur-3xl"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-block mb-6">
-                <span className="bg-primary/20 text-primary px-4 py-2 rounded-full text-sm font-semibold border border-primary/30">
-                  Industry Leaders in Industrial Fabrication
+            <div className="animate-fade-in-left">
+              <div className="inline-block mb-6 animate-scale-in">
+                <span className="bg-green-100 text-primary px-4 py-2 rounded-full text-sm font-semibold border-2 border-primary">
+                  ✨ Premium Industrial Excellence
                 </span>
               </div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white leading-tight">
-                Premier Industrial <span className="text-primary">Solutions</span>
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-primary leading-tight">
+                Build With <span className="text-secondary">Precision</span> & <span className="text-primary">Quality</span>
               </h1>
-              <p className="text-lg text-gray-300 mb-8 leading-relaxed max-w-xl">
-                Srinagar Hardware Industries delivers world-class fabrication and infrastructure solutions with 15+ years of excellence. From structural steel to solar fencing, we build the backbone of industrial success.
+              <p className="text-lg text-gray-700 mb-8 leading-relaxed max-w-xl">
+                Srinagar Hardware Industries delivers world-class fabrication and infrastructure solutions with 15+ years of excellence. From structural steel to solar fencing, we engineer the future.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   to="/products"
-                  className="inline-flex items-center justify-center gap-2 bg-primary text-black px-8 py-4 rounded-lg font-semibold hover:bg-yellow-400 transition-all"
+                  className="inline-flex items-center justify-center gap-2 bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-secondary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 transform hover:scale-105"
                 >
                   Explore Solutions
                   <ArrowRight size={20} />
                 </Link>
                 <Link
                   to="/contact"
-                  className="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-primary hover:text-black transition-all"
+                  className="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-105"
                 >
                   Get Consultation
                 </Link>
               </div>
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-4 mt-12">
-                <div>
+              <div className="grid grid-cols-3 gap-4 mt-12 animate-fade-in-up">
+                <div className="bg-white rounded-lg p-4 border-2 border-green-100 shadow-md hover:shadow-lg transition-all">
                   <p className="text-3xl font-bold text-primary">100+</p>
-                  <p className="text-gray-400 text-sm">Projects</p>
+                  <p className="text-gray-600 text-sm font-semibold">Projects</p>
                 </div>
-                <div>
+                <div className="bg-white rounded-lg p-4 border-2 border-green-100 shadow-md hover:shadow-lg transition-all">
                   <p className="text-3xl font-bold text-primary">15+</p>
-                  <p className="text-gray-400 text-sm">Years</p>
+                  <p className="text-gray-600 text-sm font-semibold">Years</p>
                 </div>
-                <div>
+                <div className="bg-white rounded-lg p-4 border-2 border-green-100 shadow-md hover:shadow-lg transition-all">
                   <p className="text-3xl font-bold text-primary">50+</p>
-                  <p className="text-gray-400 text-sm">Team</p>
+                  <p className="text-gray-600 text-sm font-semibold">Team</p>
                 </div>
               </div>
             </div>
 
-            {/* Featured Facility Image */}
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-500 rounded-lg blur-lg opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+            {/* Featured Product Image */}
+            <div className="relative group animate-fade-in-right">
+              <div className="absolute -inset-3 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
               <img
-                src={photos[0]}
-                alt="Srinagar Hardware Facility"
-                className="relative rounded-lg w-full h-96 object-cover border-2 border-primary/30"
+                src={productImages[0]}
+                alt="Srinagar Hardware Products"
+                className="relative rounded-2xl w-full h-96 object-cover border-4 border-white shadow-2xl"
               />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/30 to-transparent"></div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Service Highlights */}
-      <section className="py-24 bg-gradient-to-b from-transparent to-black/20">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Our <span className="text-primary">Expertise</span>
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+              Our Core <span className="text-secondary">Services</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Comprehensive industrial solutions tailored to your exact specifications
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Comprehensive industrial solutions tailored to your specifications
             </p>
           </div>
 
@@ -130,53 +124,55 @@ export default function Index() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className="group bg-gradient-to-br from-gray-900 to-gray-950 border border-gray-800 hover:border-primary/50 rounded-xl p-8 transition-all hover:shadow-2xl hover:shadow-primary/20"
+                className="group bg-white border-2 border-green-100 hover:border-primary rounded-2xl p-8 transition-all hover:shadow-2xl hover:shadow-primary/20 transform hover:-translate-y-2 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="bg-primary/10 w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="text-primary" size={28} />
+                <div className="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                  <service.icon className="text-primary group-hover:text-white" size={28} />
                 </div>
-                <h3 className="text-white font-bold text-lg mb-3">{service.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{service.description}</p>
+                <h3 className="text-primary font-bold text-lg mb-3">{service.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Facility Gallery */}
-      <section className="py-24 bg-black">
+      {/* Products Gallery */}
+      <section className="py-24 bg-green-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Our <span className="text-primary">Facility</span>
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+              Product & <span className="text-secondary">Facility</span> Gallery
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              State-of-the-art machinery and professional infrastructure
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              State-of-the-art machinery and precision fabrication
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {photos.slice(0, 9).map((photo, index) => (
+            {productImages.map((image, index) => (
               <div
                 key={index}
-                className="group relative overflow-hidden rounded-xl border border-gray-800 hover:border-primary/50 transition-all"
+                className="group relative overflow-hidden rounded-2xl border-2 border-white shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 animate-scale-in"
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 <img
-                  src={photo}
-                  alt={`Facility ${index + 1}`}
+                  src={image}
+                  alt={`Product ${index + 1}`}
                   className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 text-center">
+          <div className="mt-12 text-center animate-fade-in-up">
             <Link
               to="/projects"
-              className="inline-flex items-center gap-2 bg-primary text-black px-8 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-all"
+              className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-secondary hover:shadow-lg hover:shadow-primary/30 transition-all transform hover:scale-105"
             >
-              View All Gallery
+              View Complete Gallery
               <ArrowRight size={20} />
             </Link>
           </div>
@@ -184,12 +180,12 @@ export default function Index() {
       </section>
 
       {/* Premium Features Section */}
-      <section className="py-24">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-white mb-8">
-                Why Choose <span className="text-primary">Srinagar Hardware?</span>
+            <div className="animate-slide-in-left">
+              <h2 className="text-4xl font-bold text-primary mb-8">
+                Why Choose <span className="text-secondary">Srinagar Hardware?</span>
               </h2>
 
               <div className="space-y-6">
@@ -201,25 +197,25 @@ export default function Index() {
                   { title: "Custom Solutions", desc: "Tailored to your specific requirements" },
                   { title: "Professional Team", desc: "50+ experienced fabrication experts" }
                 ].map((feature, index) => (
-                  <div key={index} className="flex gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
-                      <CheckCircle2 size={16} className="text-black" />
+                  <div key={index} className="flex gap-4 group animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+                    <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1 group-hover:scale-110 transition-transform">
+                      <CheckCircle2 size={16} className="text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-bold text-lg">{feature.title}</h3>
-                      <p className="text-gray-400 text-sm mt-1">{feature.desc}</p>
+                      <h3 className="text-primary font-bold text-lg group-hover:text-secondary transition-colors">{feature.title}</h3>
+                      <p className="text-gray-600 text-sm mt-1">{feature.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-500 rounded-lg blur-lg opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+            <div className="relative group animate-fade-in-right">
+              <div className="absolute -inset-3 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
               <img
-                src={photos[9]}
-                alt="Quality Control"
-                className="relative rounded-lg w-full h-96 object-cover border-2 border-primary/30"
+                src={productImages[3]}
+                alt="Quality Products"
+                className="relative rounded-2xl w-full h-96 object-cover border-4 border-white shadow-2xl"
               />
             </div>
           </div>
@@ -227,25 +223,25 @@ export default function Index() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-gray-900 via-black to-gray-900 border-y border-primary/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Start Your <span className="text-primary">Project?</span>
+      <section className="py-24 bg-gradient-to-r from-primary via-secondary to-primary text-white border-y-4 border-primary">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Ready to Start Your <span className="text-white drop-shadow">Project?</span>
           </h2>
-          <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
             Let's discuss your industrial fabrication and infrastructure needs with our expert team
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/contact"
-              className="inline-flex items-center justify-center gap-2 bg-primary text-black px-8 py-4 rounded-lg font-semibold hover:bg-yellow-400 transition-all"
+              className="inline-flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-green-100 hover:shadow-lg transition-all transform hover:scale-105"
             >
               Contact Us Now
               <ArrowRight size={20} />
             </Link>
             <Link
               to="/projects"
-              className="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-primary hover:text-black transition-all"
+              className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary transition-all transform hover:scale-105"
             >
               View Portfolio
             </Link>
