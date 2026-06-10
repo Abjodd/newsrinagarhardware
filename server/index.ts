@@ -3,89 +3,70 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 
-const OWNER_PIN = "272335"; // hardcoded
+const OWNER_PIN = "272335";
 const MONGODB_URI = process.env.MONGODB_URI || "";
 
-let mongoConnected = false;
-let mongoose: any = null;
-let Message: any = null;
+// ─── MongoDB native driver (no mongoose) ────────────────────────────────────
+let cachedDb: any = null;
 
-// In-memory message storage as fallback
-const inMemoryMessages: any[] = [];
-
-async function initMongo() {
-  if (!MONGODB_URI) {
-    console.log("⚠️  MongoDB not configured. Using in-memory storage. Messages will be lost on server restart.");
-    return;
-  }
+async function getDb() {
+  if (cachedDb) return cachedDb;
+  if (!MONGODB_URI) return null;
 
   try {
-    // @ts-ignore - mongoose is optional
-    mongoose = await import("mongoose").then((m) => m.default);
-
-    const messageSchema = new mongoose.Schema({
-      name: { type: String, required: true },
-      email: { type: String, required: true },
-      phone: { type: String },
-      company: { type: String },
-      service: { type: String, required: true },
-      message: { type: String, required: true },
-      createdAt: { type: Date, default: Date.now },
-      status: { type: String, enum: ["new", "read", "replied"], default: "new" },
-      notes: { type: String },
+    const { MongoClient } = await import("mongodb");
+    const client = new MongoClient(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
     });
-
-    // Prevent model recompilation error in hot-reload environments
-    Message = mongoose.models.Message || mongoose.model("Message", messageSchema);
-
-    await mongoose.connect(MONGODB_URI);
-    mongoConnected = true;
-    console.log("✓ Connected to MongoDB");
-  } catch (error) {
-    console.error("MongoDB setup failed:", error);
-    mongoose = null;
-    Message = null;
+    await client.connect();
+    const dbName = MONGODB_URI.split("/").pop()?.split("?")[0] || "contacts";
+    cachedDb = client.db(dbName);
+    console.log("✓ Connected to MongoDB:", dbName);
+    return cachedDb;
+  } catch (err) {
+    console.error("MongoDB connection failed:", err);
+    return null;
   }
 }
 
+// ─── In-memory fallback ──────────────────────────────────────────────────────
+const inMemoryMessages: any[] = [];
+
+// ─── Server ──────────────────────────────────────────────────────────────────
 export async function createServer() {
   const app = express();
 
-  // Initialize MongoDB
-  await initMongo();
-
-  // Middleware
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Middleware to verify owner PIN
-  const verifyOwnerPin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const pin = req.headers["x-owner-pin"];
-    if (pin !== OWNER_PIN) {
+  const verifyOwnerPin = (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    if (req.headers["x-owner-pin"] !== OWNER_PIN) {
       return res.status(401).json({ error: "Unauthorized" });
     }
     next();
   };
 
   app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
+    res.json({ message: process.env.PING_MESSAGE ?? "ping" });
   });
 
   app.get("/api/demo", handleDemo);
 
-  // POST - submit a contact message (public)
+  // POST /api/messages — public contact form submission
   app.post("/api/messages", async (req, res) => {
     try {
       const { name, email, phone, company, service, message } = req.body;
-
       if (!name || !email || !service || !message) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      const newMsg = {
-        _id: Date.now().toString(),
+      const doc = {
         name,
         email,
         phone: phone || "",
@@ -97,123 +78,114 @@ export async function createServer() {
         notes: "",
       };
 
-      if (mongoConnected && Message) {
-        try {
-          const dbMessage = new Message(newMsg);
-          await dbMessage.save();
-          return res.status(201).json({
-            success: true,
-            message: "Message saved successfully",
-            id: dbMessage._id,
-          });
-        } catch (dbError) {
-          console.error("MongoDB save failed, using in-memory:", dbError);
-        }
+      const db = await getDb();
+      if (db) {
+        const result = await db.collection("messages").insertOne(doc);
+        return res.status(201).json({ success: true, id: result.insertedId });
       }
 
-      inMemoryMessages.push(newMsg);
-      console.log(`✓ Message saved (in-memory): ${name} - ${email}`);
-      res.status(201).json({
-        success: true,
-        message: "Thank you! We'll get back to you soon.",
-        id: newMsg._id,
-      });
-    } catch (error) {
-      console.error("Error saving message:", error);
+      const fallbackDoc = { ...doc, _id: Date.now().toString() };
+      inMemoryMessages.push(fallbackDoc);
+      res.status(201).json({ success: true, id: fallbackDoc._id });
+    } catch (err) {
+      console.error("POST /api/messages error:", err);
       res.status(500).json({ error: "Failed to save message" });
     }
   });
 
-  // GET - list all messages (owner only)
-  app.get("/api/messages", verifyOwnerPin, async (req, res) => {
+  // GET /api/messages — owner only
+  app.get("/api/messages", verifyOwnerPin, async (_req, res) => {
     try {
-      if (mongoConnected && Message) {
-        try {
-          const messages = await Message.find({}).sort({ createdAt: -1 });
-          return res.json({ success: true, messages });
-        } catch (dbError) {
-          console.error("MongoDB fetch failed:", dbError);
-        }
+      const db = await getDb();
+      if (db) {
+        const messages = await db
+          .collection("messages")
+          .find({})
+          .sort({ createdAt: -1 })
+          .toArray();
+        return res.json({ success: true, messages });
       }
 
-      const sortedMessages = [...inMemoryMessages].sort(
+      const sorted = [...inMemoryMessages].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
-      res.json({ success: true, messages: sortedMessages });
-    } catch (error) {
-      console.error("Error fetching messages:", error);
+      res.json({ success: true, messages: sorted });
+    } catch (err) {
+      console.error("GET /api/messages error:", err);
       res.status(500).json({ error: "Failed to fetch messages" });
     }
   });
 
-  // GET single message
+  // GET /api/messages/:id
   app.get("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
-      if (mongoConnected && Message) {
-        try {
-          const message = await Message.findById(req.params.id);
-          if (message) return res.json({ success: true, message });
-        } catch (dbError) {
-          console.error("MongoDB fetch failed:", dbError);
-        }
+      const db = await getDb();
+      if (db) {
+        const { ObjectId } = await import("mongodb");
+        const message = await db
+          .collection("messages")
+          .findOne({ _id: new ObjectId(req.params.id) });
+        if (message) return res.json({ success: true, message });
       }
 
       const message = inMemoryMessages.find((m) => m._id === req.params.id);
-      if (!message) return res.status(404).json({ error: "Message not found" });
+      if (!message) return res.status(404).json({ error: "Not found" });
       res.json({ success: true, message });
-    } catch (error) {
-      console.error("Error fetching message:", error);
+    } catch (err) {
+      console.error("GET /api/messages/:id error:", err);
       res.status(500).json({ error: "Failed to fetch message" });
     }
   });
 
-  // PATCH - update status/notes
+  // PATCH /api/messages/:id
   app.patch("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
       const { status, notes } = req.body;
+      const update: any = {};
+      if (status !== undefined) update.status = status;
+      if (notes !== undefined) update.notes = notes;
 
-      if (mongoConnected && Message) {
-        try {
-          const message = await Message.findByIdAndUpdate(
-            req.params.id,
-            { status, notes },
-            { new: true }
+      const db = await getDb();
+      if (db) {
+        const { ObjectId } = await import("mongodb");
+        const result = await db
+          .collection("messages")
+          .findOneAndUpdate(
+            { _id: new ObjectId(req.params.id) },
+            { $set: update },
+            { returnDocument: "after" }
           );
-          if (message) return res.json({ success: true, message });
-        } catch (dbError) {
-          console.error("MongoDB update failed:", dbError);
-        }
+        if (result) return res.json({ success: true, message: result });
       }
 
       const message = inMemoryMessages.find((m) => m._id === req.params.id);
-      if (!message) return res.status(404).json({ error: "Message not found" });
-      message.status = status || message.status;
-      message.notes = notes !== undefined ? notes : message.notes;
+      if (!message) return res.status(404).json({ error: "Not found" });
+      Object.assign(message, update);
       res.json({ success: true, message });
-    } catch (error) {
-      console.error("Error updating message:", error);
+    } catch (err) {
+      console.error("PATCH /api/messages/:id error:", err);
       res.status(500).json({ error: "Failed to update message" });
     }
   });
 
-  // DELETE a message
+  // DELETE /api/messages/:id
   app.delete("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
-      if (mongoConnected && Message) {
-        try {
-          const message = await Message.findByIdAndDelete(req.params.id);
-          if (message) return res.json({ success: true, message: "Message deleted" });
-        } catch (dbError) {
-          console.error("MongoDB delete failed:", dbError);
-        }
+      const db = await getDb();
+      if (db) {
+        const { ObjectId } = await import("mongodb");
+        const result = await db
+          .collection("messages")
+          .findOneAndDelete({ _id: new ObjectId(req.params.id) });
+        if (result) return res.json({ success: true });
       }
 
       const index = inMemoryMessages.findIndex((m) => m._id === req.params.id);
-      if (index === -1) return res.status(404).json({ error: "Message not found" });
+      if (index === -1) return res.status(404).json({ error: "Not found" });
       inMemoryMessages.splice(index, 1);
-      res.json({ success: true, message: "Message deleted" });
-    } catch (error) {
-      console.error("Error deleting message:", error);
+      res.json({ success: true });
+    } catch (err) {
+      console.error("DELETE /api/messages/:id error:", err);
       res.status(500).json({ error: "Failed to delete message" });
     }
   });
