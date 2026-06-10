@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Trash2, MessageSquare, CheckCircle, Clock, Eye, X } from "lucide-react";
+import { Trash2, MessageSquare, CheckCircle, Clock, Eye, LogOut, X } from "lucide-react";
 
 interface Message {
   _id: string;
@@ -18,16 +18,25 @@ interface Message {
 const OWNER_PIN = "272335";
 
 export default function OwnerDashboard() {
+  const [pin, setPin] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [notes, setNotes] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "new" | "read" | "replied">("all");
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pin === OWNER_PIN) {
+      setIsAuthenticated(true);
+      setError(null);
+      fetchMessages();
+    } else {
+      setError("Incorrect PIN. Please try again.");
+    }
+  };
 
   const fetchMessages = async () => {
     setLoading(true);
@@ -36,41 +45,37 @@ export default function OwnerDashboard() {
       const response = await fetch("/api/messages", {
         headers: { "x-owner-pin": OWNER_PIN },
       });
-
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
       } else {
-        setError("Failed to load messages. Check your API connection.");
+        setError("Failed to load messages.");
       }
     } catch (err) {
-      console.error("Error fetching messages:", err);
       setError("Network error — could not reach the server.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setPin("");
+    setMessages([]);
+    setSelectedMessage(null);
+    setError(null);
+  };
+
   const handleStatusChange = async (messageId: string, newStatus: "new" | "read" | "replied") => {
     try {
       const response = await fetch(`/api/messages/${messageId}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-owner-pin": OWNER_PIN,
-        },
-        body: JSON.stringify({
-          status: newStatus,
-          notes: selectedMessage?._id === messageId ? notes : undefined,
-        }),
+        headers: { "Content-Type": "application/json", "x-owner-pin": OWNER_PIN },
+        body: JSON.stringify({ status: newStatus, notes: selectedMessage?._id === messageId ? notes : undefined }),
       });
-
       if (response.ok) {
         await fetchMessages();
-        // Update selectedMessage in place so panel stays open
-        setSelectedMessage((prev) =>
-          prev?._id === messageId ? { ...prev, status: newStatus } : prev
-        );
+        setSelectedMessage((prev) => prev?._id === messageId ? { ...prev, status: newStatus } : prev);
       }
     } catch (err) {
       console.error("Error updating message:", err);
@@ -81,19 +86,12 @@ export default function OwnerDashboard() {
     try {
       const response = await fetch(`/api/messages/${messageId}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-owner-pin": OWNER_PIN,
-        },
-        body: JSON.stringify({
-          status: selectedMessage?.status,
-          notes,
-        }),
+        headers: { "Content-Type": "application/json", "x-owner-pin": OWNER_PIN },
+        body: JSON.stringify({ status: selectedMessage?.status, notes }),
       });
-
       if (response.ok) {
         await fetchMessages();
-        setSelectedMessage((prev) => (prev?._id === messageId ? { ...prev, notes } : prev));
+        setSelectedMessage((prev) => prev?._id === messageId ? { ...prev, notes } : prev);
       }
     } catch (err) {
       console.error("Error saving notes:", err);
@@ -102,13 +100,11 @@ export default function OwnerDashboard() {
 
   const handleDeleteMessage = async (messageId: string) => {
     if (!window.confirm("Are you sure you want to delete this message?")) return;
-
     try {
       const response = await fetch(`/api/messages/${messageId}`, {
         method: "DELETE",
         headers: { "x-owner-pin": OWNER_PIN },
       });
-
       if (response.ok) {
         await fetchMessages();
         setSelectedMessage(null);
@@ -122,6 +118,58 @@ export default function OwnerDashboard() {
     (m) => filterStatus === "all" || m.status === filterStatus
   );
 
+  // ── Login Screen ────────────────────────────────────────────────────────────
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 border-green-500">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="text-white" size={32} />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Owner Dashboard</h1>
+            <p className="text-gray-600">Manage contact messages</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2">Enter PIN</label>
+              <input
+                type="password"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                placeholder="Enter your PIN"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-lg focus:outline-none focus:border-green-500 text-lg tracking-widest"
+                maxLength={6}
+                required
+              />
+            </div>
+            {error && (
+              <p className="text-red-600 text-sm font-semibold text-center">{error}</p>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition-all text-lg"
+            >
+              Login
+            </button>
+          </form>
+
+          <div className="mt-8 p-4 bg-green-50 rounded-lg border border-green-200">
+            <p className="text-sm text-gray-600 text-center">
+              📧 Owner-only area. All contact form submissions appear here.
+            </p>
+          </div>
+
+          <Link to="/" className="block text-center mt-6 text-green-600 hover:text-green-700 font-semibold">
+            ← Back to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Dashboard ───────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
       {/* Header */}
@@ -134,10 +182,11 @@ export default function OwnerDashboard() {
             <h1 className="text-2xl font-bold text-gray-800">Contact Messages</h1>
           </div>
           <button
-            onClick={fetchMessages}
-            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
           >
-            ↻ Refresh
+            <LogOut size={20} />
+            Logout
           </button>
         </div>
       </div>
@@ -150,27 +199,21 @@ export default function OwnerDashboard() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left — Messages List */}
+          {/* Messages List */}
           <div className="lg:col-span-2">
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="bg-white rounded-xl p-4 border-l-4 border-red-500 shadow-lg">
                 <p className="text-gray-600 text-sm font-semibold">New</p>
-                <p className="text-3xl font-bold text-red-600">
-                  {messages.filter((m) => m.status === "new").length}
-                </p>
+                <p className="text-3xl font-bold text-red-600">{messages.filter((m) => m.status === "new").length}</p>
               </div>
               <div className="bg-white rounded-xl p-4 border-l-4 border-yellow-500 shadow-lg">
                 <p className="text-gray-600 text-sm font-semibold">Read</p>
-                <p className="text-3xl font-bold text-yellow-600">
-                  {messages.filter((m) => m.status === "read").length}
-                </p>
+                <p className="text-3xl font-bold text-yellow-600">{messages.filter((m) => m.status === "read").length}</p>
               </div>
               <div className="bg-white rounded-xl p-4 border-l-4 border-green-500 shadow-lg">
                 <p className="text-gray-600 text-sm font-semibold">Replied</p>
-                <p className="text-3xl font-bold text-green-600">
-                  {messages.filter((m) => m.status === "replied").length}
-                </p>
+                <p className="text-3xl font-bold text-green-600">{messages.filter((m) => m.status === "replied").length}</p>
               </div>
             </div>
 
@@ -208,10 +251,7 @@ export default function OwnerDashboard() {
                 filteredMessages.map((message) => (
                   <button
                     key={message._id}
-                    onClick={() => {
-                      setSelectedMessage(message);
-                      setNotes(message.notes || "");
-                    }}
+                    onClick={() => { setSelectedMessage(message); setNotes(message.notes || ""); }}
                     className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                       selectedMessage?._id === message._id
                         ? "bg-green-50 border-green-500 shadow-lg"
@@ -222,25 +262,17 @@ export default function OwnerDashboard() {
                       <div className="flex-grow min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-bold text-gray-800 truncate">{message.name}</h3>
-                          <span
-                            className={`px-2 py-0.5 text-xs font-bold rounded-full whitespace-nowrap ${
-                              message.status === "new"
-                                ? "bg-red-100 text-red-700"
-                                : message.status === "read"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-green-100 text-green-700"
-                            }`}
-                          >
+                          <span className={`px-2 py-0.5 text-xs font-bold rounded-full whitespace-nowrap ${
+                            message.status === "new" ? "bg-red-100 text-red-700"
+                            : message.status === "read" ? "bg-yellow-100 text-yellow-700"
+                            : "bg-green-100 text-green-700"
+                          }`}>
                             {message.status.toUpperCase()}
                           </span>
                         </div>
                         <p className="text-sm text-gray-600 truncate">{message.email}</p>
-                        <p className="text-sm text-gray-500 truncate mt-1">
-                          {message.message.substring(0, 80)}...
-                        </p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          {new Date(message.createdAt).toLocaleString()}
-                        </p>
+                        <p className="text-sm text-gray-500 truncate mt-1">{message.message.substring(0, 80)}...</p>
+                        <p className="text-xs text-gray-400 mt-2">{new Date(message.createdAt).toLocaleString()}</p>
                       </div>
                       <Eye className="text-gray-400 flex-shrink-0 mt-1" size={18} />
                     </div>
@@ -250,16 +282,13 @@ export default function OwnerDashboard() {
             </div>
           </div>
 
-          {/* Right — Message Detail */}
+          {/* Message Detail */}
           <div className="lg:col-span-1">
             {selectedMessage ? (
               <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-green-200 sticky top-24">
                 <div className="flex justify-between items-start mb-4">
                   <h2 className="text-xl font-bold text-gray-800">Message Details</h2>
-                  <button
-                    onClick={() => setSelectedMessage(null)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
+                  <button onClick={() => setSelectedMessage(null)} className="text-gray-400 hover:text-gray-600">
                     <X size={20} />
                   </button>
                 </div>
@@ -271,20 +300,14 @@ export default function OwnerDashboard() {
                   </div>
                   <div>
                     <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide">Email</p>
-                    <a
-                      href={`mailto:${selectedMessage.email}`}
-                      className="text-green-600 hover:text-green-700 font-semibold break-all text-sm"
-                    >
+                    <a href={`mailto:${selectedMessage.email}`} className="text-green-600 hover:text-green-700 font-semibold break-all text-sm">
                       {selectedMessage.email}
                     </a>
                   </div>
                   {selectedMessage.phone && (
                     <div>
                       <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide">Phone</p>
-                      <a
-                        href={`tel:${selectedMessage.phone}`}
-                        className="text-green-600 hover:text-green-700 font-semibold text-sm"
-                      >
+                      <a href={`tel:${selectedMessage.phone}`} className="text-green-600 hover:text-green-700 font-semibold text-sm">
                         {selectedMessage.phone}
                       </a>
                     </div>
@@ -297,15 +320,11 @@ export default function OwnerDashboard() {
                   )}
                   <div>
                     <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide">Service</p>
-                    <p className="text-gray-800 capitalize text-sm">
-                      {selectedMessage.service.replace(/-/g, " ")}
-                    </p>
+                    <p className="text-gray-800 capitalize text-sm">{selectedMessage.service.replace(/-/g, " ")}</p>
                   </div>
                   <div>
                     <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide">Date</p>
-                    <p className="text-gray-800 text-sm">
-                      {new Date(selectedMessage.createdAt).toLocaleString()}
-                    </p>
+                    <p className="text-gray-800 text-sm">{new Date(selectedMessage.createdAt).toLocaleString()}</p>
                   </div>
                 </div>
 
@@ -314,7 +333,7 @@ export default function OwnerDashboard() {
                   <p className="text-gray-800 text-sm leading-relaxed">{selectedMessage.message}</p>
                 </div>
 
-                {/* Status buttons */}
+                {/* Status */}
                 <div className="mb-5">
                   <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-2">Status</p>
                   <div className="grid grid-cols-3 gap-2">
@@ -324,21 +343,15 @@ export default function OwnerDashboard() {
                         onClick={() => handleStatusChange(selectedMessage._id, status)}
                         className={`py-2 px-2 rounded-lg font-semibold text-xs transition-all ${
                           selectedMessage.status === status
-                            ? status === "new"
-                              ? "bg-red-500 text-white"
-                              : status === "read"
-                              ? "bg-yellow-500 text-white"
+                            ? status === "new" ? "bg-red-500 text-white"
+                              : status === "read" ? "bg-yellow-500 text-white"
                               : "bg-green-500 text-white"
                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                         }`}
                       >
-                        {status === "new" ? (
-                          <Clock size={12} className="inline mr-1" />
-                        ) : status === "read" ? (
-                          <Eye size={12} className="inline mr-1" />
-                        ) : (
-                          <CheckCircle size={12} className="inline mr-1" />
-                        )}
+                        {status === "new" ? <Clock size={12} className="inline mr-1" />
+                          : status === "read" ? <Eye size={12} className="inline mr-1" />
+                          : <CheckCircle size={12} className="inline mr-1" />}
                         {status.charAt(0).toUpperCase() + status.slice(1)}
                       </button>
                     ))}
@@ -347,9 +360,7 @@ export default function OwnerDashboard() {
 
                 {/* Notes */}
                 <div className="mb-5">
-                  <label className="text-gray-500 text-xs font-semibold uppercase tracking-wide block mb-2">
-                    Notes
-                  </label>
+                  <label className="text-gray-500 text-xs font-semibold uppercase tracking-wide block mb-2">Notes</label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
