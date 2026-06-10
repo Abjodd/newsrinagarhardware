@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 
-const OWNER_PIN = process.env.OWNER_PIN || "1234";
+const OWNER_PIN = "272335"; // hardcoded
 const MONGODB_URI = process.env.MONGODB_URI || "";
 
 let mongoConnected = false;
@@ -35,7 +35,8 @@ async function initMongo() {
       notes: { type: String },
     });
 
-    Message = mongoose.model("Message", messageSchema);
+    // Prevent model recompilation error in hot-reload environments
+    Message = mongoose.models.Message || mongoose.model("Message", messageSchema);
 
     await mongoose.connect(MONGODB_URI);
     mongoConnected = true;
@@ -67,7 +68,6 @@ export async function createServer() {
     next();
   };
 
-  // Example API routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });
@@ -75,7 +75,7 @@ export async function createServer() {
 
   app.get("/api/demo", handleDemo);
 
-  // Message routes
+  // POST - submit a contact message (public)
   app.post("/api/messages", async (req, res) => {
     try {
       const { name, email, phone, company, service, message } = req.body;
@@ -94,7 +94,7 @@ export async function createServer() {
         message,
         createdAt: new Date(),
         status: "new",
-        notes: ""
+        notes: "",
       };
 
       if (mongoConnected && Message) {
@@ -104,20 +104,19 @@ export async function createServer() {
           return res.status(201).json({
             success: true,
             message: "Message saved successfully",
-            id: dbMessage._id
+            id: dbMessage._id,
           });
         } catch (dbError) {
           console.error("MongoDB save failed, using in-memory:", dbError);
         }
       }
 
-      // Fallback to in-memory storage
       inMemoryMessages.push(newMsg);
       console.log(`✓ Message saved (in-memory): ${name} - ${email}`);
       res.status(201).json({
         success: true,
         message: "Thank you! We'll get back to you soon.",
-        id: newMsg._id
+        id: newMsg._id,
       });
     } catch (error) {
       console.error("Error saving message:", error);
@@ -125,6 +124,7 @@ export async function createServer() {
     }
   });
 
+  // GET - list all messages (owner only)
   app.get("/api/messages", verifyOwnerPin, async (req, res) => {
     try {
       if (mongoConnected && Message) {
@@ -136,9 +136,8 @@ export async function createServer() {
         }
       }
 
-      // Return in-memory messages
-      const sortedMessages = [...inMemoryMessages].sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      const sortedMessages = [...inMemoryMessages].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       res.json({ success: true, messages: sortedMessages });
     } catch (error) {
@@ -147,6 +146,7 @@ export async function createServer() {
     }
   });
 
+  // GET single message
   app.get("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
       if (mongoConnected && Message) {
@@ -158,12 +158,8 @@ export async function createServer() {
         }
       }
 
-      // Search in-memory
-      const message = inMemoryMessages.find(m => m._id === req.params.id);
-      if (!message) {
-        return res.status(404).json({ error: "Message not found" });
-      }
-
+      const message = inMemoryMessages.find((m) => m._id === req.params.id);
+      if (!message) return res.status(404).json({ error: "Message not found" });
       res.json({ success: true, message });
     } catch (error) {
       console.error("Error fetching message:", error);
@@ -171,6 +167,7 @@ export async function createServer() {
     }
   });
 
+  // PATCH - update status/notes
   app.patch("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
       const { status, notes } = req.body;
@@ -188,14 +185,10 @@ export async function createServer() {
         }
       }
 
-      // Update in-memory
-      const message = inMemoryMessages.find(m => m._id === req.params.id);
-      if (!message) {
-        return res.status(404).json({ error: "Message not found" });
-      }
-
+      const message = inMemoryMessages.find((m) => m._id === req.params.id);
+      if (!message) return res.status(404).json({ error: "Message not found" });
       message.status = status || message.status;
-      message.notes = notes || message.notes;
+      message.notes = notes !== undefined ? notes : message.notes;
       res.json({ success: true, message });
     } catch (error) {
       console.error("Error updating message:", error);
@@ -203,6 +196,7 @@ export async function createServer() {
     }
   });
 
+  // DELETE a message
   app.delete("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
       if (mongoConnected && Message) {
@@ -214,12 +208,8 @@ export async function createServer() {
         }
       }
 
-      // Delete from in-memory
-      const index = inMemoryMessages.findIndex(m => m._id === req.params.id);
-      if (index === -1) {
-        return res.status(404).json({ error: "Message not found" });
-      }
-
+      const index = inMemoryMessages.findIndex((m) => m._id === req.params.id);
+      if (index === -1) return res.status(404).json({ error: "Message not found" });
       inMemoryMessages.splice(index, 1);
       res.json({ success: true, message: "Message deleted" });
     } catch (error) {
