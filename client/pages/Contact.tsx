@@ -10,6 +10,8 @@ export default function Contact() {
     service: "",
     message: ""
   });
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -19,54 +21,46 @@ export default function Contact() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const response = await fetch("/api/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  try {
+    const response = await fetch("/api/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-      const data = await response.json();
+    if (response.ok) {
+      setPopupMessage(
+        "✅ Your message has been sent successfully. We will get back to you shortly."
+      );
+      setShowPopup(true);
 
-      if (response.ok) {
-        alert("Thank you for your inquiry! We'll get back to you soon at " + formData.email);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          company: "",
-          service: "",
-          message: ""
-        });
-      } else {
-        // Even if there's an error, show success message to user
-        alert("Thank you for your inquiry! We'll get back to you soon.");
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          company: "",
-          service: "",
-          message: ""
-        });
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Thank you for your inquiry! We'll get back to you soon.");
       setFormData({
         name: "",
         email: "",
         phone: "",
         company: "",
         service: "",
-        message: ""
+        message: "",
       });
+    } else {
+      setPopupMessage(
+        "❌ Unable to send your message at the moment. Please try again later."
+      );
+      setShowPopup(true);
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    setPopupMessage(
+      "❌ Unable to send your message at the moment. Please try again later."
+    );
+    setShowPopup(true);
+  }
+};
 
   return (
     <div className="bg-background">
@@ -340,6 +334,30 @@ export default function Contact() {
           </div>
         </div>
       </section>
+      {showPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+    <div className="bg-gray-900 border border-primary/30 rounded-2xl p-8 max-w-md mx-4 shadow-2xl animate-in fade-in zoom-in duration-300">
+      <div className="text-center">
+        <div className="text-5xl mb-4">📨</div>
+
+        <h3 className="text-2xl font-bold text-white mb-3">
+          Message Sent
+        </h3>
+
+        <p className="text-gray-300 mb-6">
+          {popupMessage}
+        </p>
+
+        <button
+          onClick={() => setShowPopup(false)}
+          className="w-full bg-primary text-black font-semibold py-3 rounded-lg hover:bg-yellow-400 transition-colors"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
