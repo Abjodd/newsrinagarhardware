@@ -2,14 +2,16 @@ import { Link } from "react-router-dom";
 
 export default function Projects() {
   const facilityPhotos = [
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fce7a364d27d543178f5c2f415aa423c4?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F599dde0c5a8348e08c6019f43f63c6e3?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F772b7f0844ab461bb422eaea9de1e544?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fc9b84739d1fd42029f66979a3f3797b8?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F3218bc89686f4a42be15dc880b60e566?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe16475f7945647638f99df3ec459081a?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Ffcdbe46c7c9f435c8aca0c462b19c37c?format=webp&width=800&height=1200",
-    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fd223799c0b5d40939eff7da9504b22e3?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe06305e43d9d4cffa08fb1883ed32d0e?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F121fc36202154b0b8915141850ca6c70?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fac859cb0e2bf4c28b764b179a64d052b?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F08b5a12c435c4133997246605a6d1662?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fe1c45694a3e64d96947372dd9c1524ab?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F2fdcb34c0a2e40f1b476c1ffca62cd01?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fdc94756d0a6342ba983830e4c7dcb5d7?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F6bdbdd126049437caed60aa1eb0eb41e?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2F11b93fbe48bb430f87fb502cb4b95884?format=webp&width=800&height=1200",
+    "https://cdn.builder.io/api/v1/image/assets%2F0d17661bd5434a8792db3f67e91c74a7%2Fb79fd40819884227b6e3c9795210e624?format=webp&width=800&height=1200",
   ];
 
   const projects = [
@@ -80,7 +82,7 @@ export default function Projects() {
       {/* Facility Gallery */}
       <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white text-center mb-4">Our Facility in Action</h2>
+          <h2 className="text-4xl font-bold text-black text-center mb-4">Our Facility in Action</h2>
           <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
             State-of-the-art machinery and professional infrastructure showcasing our fabrication capabilities
           </p>

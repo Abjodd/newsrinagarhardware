@@ -98,7 +98,7 @@ export default function Index() {
             <div className="relative group animate-fade-in-right">
               <div className="absolute -inset-3 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
               <img
-                src={productImages[7]}
+                src={productImages[6]}
                 alt="Srinagar Hardware Products"
                 className="relative rounded-2xl w-full h-96 object-cover border-4 border-white shadow-2xl"
               />
