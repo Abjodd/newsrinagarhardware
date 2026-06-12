@@ -16,16 +16,18 @@ export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Navigation */}
-      <nav className="bg-black border-b border-primary/30">
+      <nav className="bg-white border-b border-primary/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0 group">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-black font-bold text-lg">
-                  SH
-                </div>
-                <span className="text-white font-bold text-lg hidden sm:inline">
+                <img
+                  src="/logo2.png"
+                  alt="Srinagar Hardware logo"
+                  className="w-18 h-12 rounded-lg object-contain"
+                />
+                <span className="text-black font-bold text-lg hidden sm:inline">
                   Srinagar Hardware
                 </span>
               </div>
@@ -37,7 +39,7 @@ export default function Layout() {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className="text-gray-300 hover:text-primary transition-colors text-sm font-medium"
+                  className="text-gray-700  hover:text-primary transition-colors text-sm font-medium"
                 >
                   {link.label}
                 </Link>
