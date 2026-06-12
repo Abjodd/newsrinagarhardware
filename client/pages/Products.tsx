@@ -68,7 +68,7 @@ export default function Products() {
       <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Our <span className="text-primary">Product Range</span></h2>
+            <h2 className="text-4xl font-bold text-black mb-4">Our <span className="text-primary">Product Range</span></h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
               Complete industrial solutions from design to installation
             </p>
@@ -131,7 +131,7 @@ export default function Products() {
       {/* Process Section */}
       <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white text-center mb-16">
+          <h2 className="text-4xl font-bold text-black text-center mb-16">
             Our <span className="text-primary">Process</span>
           </h2>
 
@@ -152,7 +152,7 @@ export default function Products() {
                     </div>
                   </div>
                   <div className="flex-grow">
-                    <h3 className="text-white font-bold text-lg mb-2">{item.title}</h3>
+                    <h3 className="text-gray-400 font-bold text-lg mb-2">{item.title}</h3>
                     <p className="text-gray-400">{item.description}</p>
                   </div>
                 </div>
@@ -212,7 +212,7 @@ export default function Products() {
       {/* CTA Section */}
       <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
+          <h2 className="text-4xl font-bold text-gray mb-6">
             Ready to Get <span className="text-primary">Started?</span>
           </h2>
           <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">

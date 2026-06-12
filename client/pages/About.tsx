@@ -55,14 +55,14 @@ export default function About() {
             </div>
 
             <div>
-              <h2 className="text-4xl font-bold text-white mb-6">Our Journey</h2>
-              <p className="text-gray-300 mb-4 leading-relaxed">
+              <h2 className="text-4xl font-bold text-black mb-6">Our Journey</h2>
+              <p className="text-gray-500 mb-4 leading-relaxed">
                 Founded by Masood Ali Wani, Srinagar Hardware Industries has established itself as a leader in industrial fabrication and infrastructure development. What started as a commitment to quality has grown into a comprehensive solution provider for some of the region's most challenging projects.
               </p>
-              <p className="text-gray-300 mb-4 leading-relaxed">
+              <p className="text-gray-500 mb-4 leading-relaxed">
                 Over 15 years, we have successfully completed 100+ projects ranging from large-scale structural steel fabrication to specialized solar-powered fencing systems. Our team of 50+ skilled professionals brings expertise, innovation, and dedication to every project.
               </p>
-              <p className="text-gray-300 leading-relaxed">
+              <p className="text-gray-500 leading-relaxed">
                 Our facility in Baghi Ali Mardan Khan Industrial Estate is equipped with state-of-the-art machinery and technology, allowing us to deliver precision-engineered solutions that exceed industry standards.
               </p>
             </div>

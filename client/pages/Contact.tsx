@@ -295,7 +295,7 @@ export default function Contact() {
       {/* FAQ Section */}
       <section className="py-20 md:py-32">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray text-center mb-12">
             Frequently Asked <span className="text-primary">Questions</span>
           </h2>
 

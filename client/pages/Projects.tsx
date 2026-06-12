@@ -182,7 +182,7 @@ export default function Projects() {
       {/* Project Highlights */}
       <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white text-center mb-16">
+          <h2 className="text-4xl font-bold text-graytext-center mb-16">
             Featured <span className="text-primary">Projects</span>
           </h2>
 
@@ -195,8 +195,8 @@ export default function Projects() {
               </div>
               <div>
                 <p className="text-primary font-semibold uppercase tracking-wider mb-3">Featured Project</p>
-                <h3 className="text-4xl font-bold text-white mb-4">Industrial Steel Bridge</h3>
-                <p className="text-gray-300 mb-4 leading-relaxed">
+                <h3 className="text-4xl font-bold text-gray mb-4">Industrial Steel Bridge</h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
                   A landmark infrastructure project showcasing our expertise in large-scale structural steel fabrication. This bridge spans multiple kilometers and handles heavy industrial traffic daily.
                 </p>
                 <ul className="space-y-2 mb-6">
@@ -222,7 +222,7 @@ export default function Projects() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1">
                 <p className="text-primary font-semibold uppercase tracking-wider mb-3">Featured Project</p>
-                <h3 className="text-4xl font-bold text-white mb-4">Solar Fencing System</h3>
+                <h3 className="text-4xl font-bold text-gray mb-4">Solar Fencing System</h3>
                 <p className="text-gray-300 mb-4 leading-relaxed">
                   An innovative solar-powered fencing solution installed across a large agricultural property. The system combines security with sustainable energy generation.
                 </p>
@@ -281,7 +281,7 @@ export default function Projects() {
       {/* CTA Section */}
       <section className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
+          <h2 className="text-4xl font-bold text-gray mb-6">
             Start Your Project <span className="text-primary">Today</span>
           </h2>
           <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
