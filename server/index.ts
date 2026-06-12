@@ -119,16 +119,17 @@ export async function createServer() {
   // GET /api/messages/:id
   app.get("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
+      const id = String(req.params.id);
       const db = await getDb();
       if (db) {
         const { ObjectId } = await import("mongodb");
         const message = await db
           .collection("messages")
-          .findOne({ _id: new ObjectId(req.params.id) });
+          .findOne({ _id: new ObjectId(id) });
         if (message) return res.json({ success: true, message });
       }
 
-      const message = inMemoryMessages.find((m) => m._id === req.params.id);
+      const message = inMemoryMessages.find((m) => m._id === id);
       if (!message) return res.status(404).json({ error: "Not found" });
       res.json({ success: true, message });
     } catch (err) {
@@ -140,6 +141,7 @@ export async function createServer() {
   // PATCH /api/messages/:id
   app.patch("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
+      const id = String(req.params.id);
       const { status, notes } = req.body;
       const update: any = {};
       if (status !== undefined) update.status = status;
@@ -151,14 +153,14 @@ export async function createServer() {
         const result = await db
           .collection("messages")
           .findOneAndUpdate(
-            { _id: new ObjectId(req.params.id) },
+            { _id: new ObjectId(id) },
             { $set: update },
             { returnDocument: "after" }
           );
         if (result) return res.json({ success: true, message: result });
       }
 
-      const message = inMemoryMessages.find((m) => m._id === req.params.id);
+      const message = inMemoryMessages.find((m) => m._id === id);
       if (!message) return res.status(404).json({ error: "Not found" });
       Object.assign(message, update);
       res.json({ success: true, message });
@@ -171,16 +173,17 @@ export async function createServer() {
   // DELETE /api/messages/:id
   app.delete("/api/messages/:id", verifyOwnerPin, async (req, res) => {
     try {
+      const id = String(req.params.id);
       const db = await getDb();
       if (db) {
         const { ObjectId } = await import("mongodb");
         const result = await db
           .collection("messages")
-          .findOneAndDelete({ _id: new ObjectId(req.params.id) });
+          .findOneAndDelete({ _id: new ObjectId(id) });
         if (result) return res.json({ success: true });
       }
 
-      const index = inMemoryMessages.findIndex((m) => m._id === req.params.id);
+      const index = inMemoryMessages.findIndex((m) => m._id === id);
       if (index === -1) return res.status(404).json({ error: "Not found" });
       inMemoryMessages.splice(index, 1);
       res.json({ success: true });
