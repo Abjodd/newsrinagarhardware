@@ -278,19 +278,68 @@ export default function Contact() {
 
       {/* Map Section */}
       <section className="py-20 md:py-32 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white text-center mb-12">Visit Our Facility</h2>
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden border border-gray-700 h-96">
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-orange-500/20 flex items-center justify-center text-center">
-              <div>
-                <p className="text-6xl mb-4">📍</p>
-                <p className="text-white font-bold text-xl mb-2">Baghi Ali Mardan Khan Industrial Estate</p>
-                <p className="text-gray-400">Srinagar, Jammu & Kashmir</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 className="text-4xl font-bold text-white text-center mb-12">
+      Visit Our Facility
+    </h2>
+
+    <a
+      href="https://maps.app.goo.gl/nQDEZ9H8NffxQiho8"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block"
+    >
+      <div className="rounded-xl overflow-hidden border border-gray-700 hover:border-primary transition-all duration-300 cursor-pointer">
+        <iframe
+          src="https://maps.google.com/maps?q=Baghi%20Ali%20Mardan%20Khan%20Industrial%20Estate%20Srinagar&t=&z=15&ie=UTF8&iwloc=&output=embed"
+          width="100%"
+          height="450"
+          style={{ border: 0 }}
+          loading="lazy"
+          title="New Srinagar Hardware Location"
+          className="pointer-events-none"
+        />
+      </div>
+    </a>
+     <a
+  href="https://maps.app.goo.gl/nQDEZ9H8NffxQiho8"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white font-bold text-lg shadow-[0_0_30px_rgba(249,115,22,0.35)] hover:shadow-[0_0_50px_rgba(249,115,22,0.6)] hover:scale-105 transition-all duration-300"
+>
+  <span className="text-2xl group-hover:translate-x-1 transition-transform duration-300">
+    🧭
+  </span>
+
+  <span>Navigate Me</span>
+
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M17 8l4 4m0 0l-4 4m4-4H3"
+    />
+  </svg>
+</a>
+    
+
+    <div className="text-center mt-6">
+      <p className="text-white font-bold text-xl">
+        Baghi Ali Mardan Khan Industrial Estate
+      </p>
+      <p className="text-gray-400">
+        Srinagar, Jammu & Kashmir
+      </p>
+    </div>
+  </div>
+</section>
 
       {/* FAQ Section */}
       <section className="py-20 md:py-32">
